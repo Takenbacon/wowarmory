@@ -226,12 +226,13 @@ Class Items {
         elseif($vendorLoot && (!$reputationReward || $reputationReward == 0)) {
             return array('value' => 'sourceType.vendor');
         }
-        $questLoot = Armory::$wDB->selectCell("
-		SELECT `entry`
-		  FROM `quest_template`
-		      WHERE `RewChoiceItemId1` = %d OR `RewChoiceItemId2` = %d OR `RewChoiceItemId3` = %d OR
-		          `RewChoiceItemId4` = %d OR `RewChoiceItemId5` = %d OR `RewChoiceItemId6` = %d LIMIT 1", $item, $item, $item,
-		$item, $item, $item);
+        $questLoot = Armory::$wDB->selectCell
+        ("
+        SELECT `Id` FROM `quest_template`
+        WHERE `RewardChoiceItemId1` = %d OR `RewardChoiceItemId2` = %d OR `RewardChoiceItemId3` = %d OR
+              `RewardChoiceItemId4` = %d OR `RewardChoiceItemId5` = %d OR `RewardChoiceItemId6` = %d LIMIT 1",
+            $item, $item, $item, $item, $item, $item
+        );
         if($questLoot) {
             return array('value' => 'sourceType.questReward');
         }
@@ -366,11 +367,14 @@ Class Items {
                 }
                 break;
             case 'questreward':
-                $QuestLoot = Armory::$wDB->select("
-                SELECT `entry` AS `id`, `Title` AS `name`, `QuestLevel` AS `level`, `MinLevel` AS `reqMinLevel`, `SuggestedPlayers` AS `suggestedPartySize`
-                    FROM `quest_template`
-                        WHERE `RewChoiceItemId1` = %d OR `RewChoiceItemId2` = %d OR `RewChoiceItemId3` = %d OR
-                            `RewChoiceItemId4` = %d OR `RewChoiceItemId5` = %d OR `RewChoiceItemId6` = %d", $item, $item, $item, $item, $item, $item);
+                $QuestLoot = Armory::$wDB->select
+                ("
+                SELECT `Id` AS `id`, `Title` AS `Title`, `Level` AS `Level`, `MinLevel` AS `MinLevel`, `SuggestedPlayers` AS `SuggestedPlayers`
+                FROM `quest_template`
+                WHERE `RewardChoiceItemId1` = %d OR `RewardChoiceItemId2` = %d OR `RewardChoiceItemId3` = %d OR
+                      `RewardChoiceItemId4` = %d OR `RewardChoiceItemId5` = %d OR `RewardChoiceItemId6` = %d",
+                    $item, $item, $item, $item, $item, $item
+                );
                 if(!is_array($QuestLoot)) {
                     return false;
                 }
@@ -389,7 +393,7 @@ Class Items {
                 if(!is_array($QuestStart)) {
                     return false;
                 }
-                $lootTable = Armory::$wDB->selectRow("SELECT `entry` AS `id`, `Title` AS `name`, `QuestLevel` AS `level`, `MinLevel` AS `reqMinLevel`, `SuggestedPlayers` AS `suggestedPartySize` FROM `quest_template` WHERE `entry`=%d", $QuestStart);
+                $lootTable = Armory::$wDB->selectRow("SELECT `Id` AS `id`, `Title` AS `Title`, `Level` AS `level`, `MinLevel` AS `MinLevel`, `SuggestedPlayers` AS `SuggestedPlayers` FROM `quest_template` WHERE `Id`=%d", $QuestStart);
                 if(Armory::GetLocale() != 'en_gb' || Armory::GetLocale() != 'en_us') {
                     $lootTable['name'] = Mangos::GetQuestInfo($QuestStart, 'title');
                 }
@@ -397,7 +401,7 @@ Class Items {
                 $lootTable['area'] =  Mangos::GetQuestInfo($QuestStart, 'map');
                 break;
             case 'providedfor':
-                $QuestInfo = Armory::$wDB->select("SELECT `entry` AS `id`, `QuestLevel` AS `level`, `Title` AS `name`, `MinLevel` AS `reqMinLevel`, `SuggestedPlayers` AS `suggestedPartySize` FROM `quest_template` WHERE `SrcItemId`=%d", $item);
+                $QuestInfo = Armory::$wDB->select("SELECT `Id` AS `Id`, `Level` AS `level`, `Title` AS `Title`, `MinLevel` AS `MinLevel`, `SuggestedPlayers` AS `SuggestedPlayers` FROM `quest_template` WHERE `SourceItemId`=%d", $item);
                 if(!is_array($QuestInfo)) {
                     return false;
                 }
@@ -412,9 +416,9 @@ Class Items {
                 break;
             case 'objectiveof':
                 $QuestInfo = Armory::$wDB->select("
-                SELECT `entry` AS `id`, `QuestLevel` AS `level`, `Title` AS `name`, `MinLevel` AS `reqMinLevel`, `SuggestedPlayers` AS `suggestedPartySize`
+                SELECT `Id` AS `id`, `Level` AS `level`, `Title` AS `Title`, `MinLevel` AS `MinLevel`, `SuggestedPlayers` AS `SuggestedPlayers`
                     FROM `quest_template`
-                        WHERE `ReqItemId1`=%d OR `ReqItemId2`=%d OR `ReqItemId3`=%d OR `ReqItemId4`=%d OR `ReqItemId5`=%d", $item, $item, $item, $item, $item);
+                        WHERE `RequiredItemId1`=%d OR `RequiredItemId2`=%d OR `RequiredItemId3`=%d OR `RequiredItemId4`=%d OR `RequiredItemId5`=%d", $item, $item, $item, $item, $item);
                 if(!is_array($QuestInfo)) {
                     return false;
                 }
