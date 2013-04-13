@@ -31,26 +31,39 @@ if ($item_data['heroic'])
     echo '<span class="bonusGreen">Heroic</span>
     <br>';
 }
-echo '' . $item_data['bonding'] . '
+echo $item_data['bonding'] . '
 <br>
-<span class="tooltipRight" style="display: inline;"></span>
+<span class="tooltipRight" style="display: inline;">
+' . $item_data['subclass'] . '
+</span>
 ' . $item_data['inventory_type'] . '
-<br>
-' . $item_data['armor'] . ' Armor
 <br>';
+if ($item_data['armor'] > 0)
+{
+    echo $item_data['armor'] . ' Armor
+    <br>';
+}
 foreach ($item_data['solid_stats'] as $solid_stats)
 {
     echo '<span class="">' . $solid_stats . '</span>
     <br>';
 }
-echo '<img src="./wow-icons/_images/21x21/inv_jewelcrafting_gem_37.png" class="socketImg p">
+echo '<!--<img src="./wow-icons/_images/21x21/inv_jewelcrafting_gem_37.png" class="socketImg p">
 +40 Attack Power
 <br>
 <span class="bonusGreen">Socket Bonus: +4 Agility</span>
-<br>
-Requires Level ' . $item_data['required_level'] . '
-<br>
-Item Level ' . $item_data['item_level'] . '
+<br>-->';
+if ($item_data['durability'] > 0)
+{
+    echo 'Durability ' . $item_data['durability'] . ' / ' . $item_data['durability'] . '
+    <br>';
+}
+if ($item_data['required_level'] > 0)
+{
+    echo 'Requires Level ' . $item_data['required_level'] . '
+    <br>';
+}
+echo 'Item Level ' . $item_data['item_level'] . '
 <br>';
 foreach ($item_data['soft_stats'] as $soft_stats)
 {
@@ -59,7 +72,4 @@ foreach ($item_data['soft_stats'] as $soft_stats)
    </span>
    <br>';
 }
-echo '<br>';
-
-var_dump($item_data);
 ?>

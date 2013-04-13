@@ -10,7 +10,7 @@ class Item
         $this->item_template_data = Armory::$wDB->SelectRow("SELECT name, Quality, bonding, armor, class, delay, dmg_min1, dmg_max1, InventoryType, Flags, maxcount, description,
                 ItemLevel, stat_type1, stat_value1, stat_type2, stat_value2, stat_type3, stat_value3, stat_type4, stat_value4, stat_type5,
                 stat_value5, stat_type6, stat_value6, stat_type7, stat_value7, stat_type8, stat_value8, stat_type9, stat_value9, stat_type10,
-                stat_value10, RequiredLevel FROM item_template WHERE entry='%d'", $itemID);
+                stat_value10, RequiredLevel, MaxDurability, subclass, socketBonus FROM item_template WHERE entry='%d'", $itemID);
 
         if (!$this->item_template_data)
             return false;
@@ -29,8 +29,21 @@ class Item
         $item_tooltip['description'] = $this->item_template_data['description'];
         $item_tooltip['item_level'] = $this->item_template_data['ItemLevel'];
         $item_tooltip['required_level'] = $this->item_template_data['RequiredLevel'];
+        $item_tooltip['durability'] = $this->item_template_data['MaxDurability'];
+        $item_tooltip['subclass'] = Armory::$aDB->SelectCell("SELECT subclass_name_en_gb FROM ARMORYDBPREFIX_itemsubclass WHERE class='%d' AND subclass='%d'", $this->item_template_data['class'], $this->item_template_data['subclass']);
+        $item_tooltip['socket_bonus'] = null;
+        $item_tooltip['useable_classes'] = null;
+        $item_tooltip['useable_races'] = null;
+        $item_tooltip['gems'] = null;
+        $item_tooltip['enchants'] = null;
+        $item_tooltip = $this->GetItemStats($item_tooltip);
+        //Classes
 
-        // Item stats
+        return $item_tooltip;
+    }
+
+    private function GetItemStats($item_tooltip)
+    {
         for ($i = 1; $i <= 10; $i++)
         {
             $stats[$i]['stat_type'] = $this->item_template_data['stat_type' . $i];
@@ -49,6 +62,7 @@ class Item
             else
                 $item_tooltip['soft_stats'][$u++] = $this->GetItemStat($data);
         }
+
         return $item_tooltip;
     }
 
@@ -188,7 +202,7 @@ class Item
         else if ($maxCount == 1)
             $unique = 'Unique';
         else
-            $unique = "false";
+            $unique = 0;
 
         return $unique;
     }
